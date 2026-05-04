@@ -1,0 +1,153 @@
+// JSONC file for defining modules to be imported
+{
+    // Left modules
+    "hyprland/window": {
+        "max-length": 40,
+        "rewrite": {
+            "(.*) - Chromium": "$1",
+        },
+        "separate-outputs": true,
+    },
+
+    // Center modules
+    "hyprland/workspaces": {
+        "on-scroll-up": "hyprctl dispatch workspace r-1",
+        "on-scroll-down": "hyprctl dispatch workspace r+1",
+        "on-click": "activate",
+        "active-only": false,
+        "all-outputs": false,
+        "format": "{name}",
+        "format-icons": {
+            "urgent": "",
+            "active": "",
+            "default": "",
+        }
+    },
+
+    // Right modules
+    "pulseaudio": {
+        // "scroll-step": 1,
+        "format": "{icon}  {volume}%",
+        "format-bluetooth": "{volume}% {icon} {format_source}",
+        "format-bluetooth-muted": " {icon} {format_source}",
+        "format-muted": " {format_source}",
+        "format-source": "{volume}% ",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": " ",
+            "hands-free": " ",
+            "headset": " ",
+            "phone": " ",
+            "portable": " ",
+            "car": " ",
+            "default": [
+                "",
+                "",
+                ""
+            ]
+        },
+        "on-click": "pavucontrol"
+    },
+    
+    "bluetooth": {
+        "format": " {status}",
+        "format-disabled": "",
+        "format-off": "",
+        "interval": 30,
+        // "on-click": "blueman-manager",
+        "on-click": "kitty -e bluetui",
+    },
+    
+    "network": {
+        "interval": 10,
+        "format-wifi": "  {essid}",
+        "tooltip-format": "  {essid} |  {bandwidthDownBytes}",
+        "format-disconnected": "Disconnected",
+        "format-ethernet": "  {ipaddr}",
+        "max-length": 20,
+        "on-click": "kitty -e impala",
+    },
+    
+    "custom/system": {
+        "format": "",
+        "tooltip": false
+    },
+    
+    "cpu": {
+        "format": "C {usage}%",
+        "on-click": "kitty -e htop", 
+    },
+    
+    "memory": {
+        "format": "M {}%",
+        "on-click": "kitty -e htop", 
+    },
+    
+    "disk": {
+        "interval": 30,
+        "format": "D {percentage_used}%",
+        "path": "/",
+    },
+
+    "custom/gpu": {
+        "interval": 3,
+        "format": "G {text}%",
+        "exec": "nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits",
+        "exec-alt": "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits",
+    },
+
+    "clock": {
+        "format": "{:%H:%M | %d/%m/%y}",
+        "tooltip-format": "<tt><small>{calendar}</small></tt>",
+        "calendar": {
+            "mode": "month",
+            "mode-mon-col"  : 3,
+            "weeks-pos"     : "right",
+            "on-scroll"     : 1,
+            "format": { // TODO: Change the colors
+                "months":     "<span color='#ffead3'><b>{}</b></span>",
+                "days":       "<span color='#ecc6d9'><b>{}</b></span>",
+                "weeks":      "<span color='#99ffdd'><b>W{}</b></span>",
+                "weekdays":   "<span color='#ffcc66'><b>{}</b></span>",
+                "today":      "<span color='#ff6699'><b><u>{}</u></b></span>"
+            },
+        },
+        "actions":  {
+            "on-click-right": "mode",
+            "on-scroll-up": "tz_up",
+            "on-scroll-down": "tz_down",
+            "on-scroll-up": "shift_up",
+            "on-scroll-down": "shift_down"
+        }
+    },
+
+    "custom/notification": {
+        "escape": true,
+        "exec": "swaync-client -swb",
+        "exec-if": "which swaync-client",
+        "format": "<span size='16pt'>{icon}</span>",
+        "format-icons": {
+            "notification": "󱅫",
+            "none": "󰂜",
+            "dnd-notification": "󰂠",
+            "dnd-none": "󰪓",
+            "inhibited-notification": "󰂛",
+            "inhibited-none": "󰪑",
+            "dnd-inhibited-notification": "󰂛",
+            "dnd-inhibited-none": "󰪑"
+        },
+        "on-click": "sleep 0.1 && swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "return-type": "json",
+        "tooltip": true,
+    },
+    
+    "custom/exit": {
+        "format": "  ",  // TODO: Use wlogout plugin
+        "on-click": "exec wlogout",
+        "on-click-right": "hyprlock",
+        "tooltip-format": "Left: Logout\nRight: Lock screen"
+    },
+}
+
+

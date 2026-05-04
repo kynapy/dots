@@ -1,0 +1,90 @@
+/* TODO: Reduce top and bottom margins of all modules when transparent*/
+
+@import "colors.css";
+
+* {
+    font-family: 'Noto Sans', 'Font Awesome 7 Free', 'JetBrains Mono Nerd Font';
+    font-size: 14px;
+    font-weight: bold;
+    padding: 0px;
+    margin: 0px;
+    margin-top: 2px;
+
+    /* Minimal CSS reset for waybar */
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+}
+
+window#waybar {
+    background-color: rgba(0, 0, 0, 0);
+    padding: 0;
+}
+
+/* Shows and controls which workspace we are on */
+#workspaces button {
+    opacity: 0.5;
+    background-color: @secondary_container;
+    padding: 0px 7px 3px 7px;
+    margin: 0px 3px;
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+#workspaces button.active {
+    background-color: @primary_container;
+    transition: all 0.3s ease-in-out;
+    min-width: 40px;
+}
+
+#workspaces button:hover {
+    background-color: rgba(212, 199, 135, 1);
+    /* TODO: Set to matugen theme */
+}
+
+/* RIGHT SIDE MODULE STYLING */
+/* Common design for the modules */
+#pulseaudio,
+#clock,
+#network,
+#bluetooth {
+    opacity: 0.7;
+    background-color: whitesmoke;
+    color: black;
+    padding: 1px 10px 0px 10px;
+    border-radius: 12px;
+}
+
+#cpu,
+#memory,
+#disk,
+#custom-gpu {
+    opacity: 0.7;
+    background-color: whitesmoke;
+    color: black;
+    padding: 1px 10px 0px 10px;
+    border-radius: 12px;
+}
+
+#cpu {
+    margin-left: 20px;
+}
+
+#custom-notification {
+    opacity: 0.7;
+    background-color: whitesmoke;
+    color: black;
+    font-size: 12px;
+    padding: 0px 13px 0px 10px;
+    border-radius: 25px;
+}
+
+/* Lock screen / shutdown */
+#custom-exit {
+    opacity: 0.7;
+    background-color: whitesmoke;
+    color: black;
+    border-radius: 20px;
+    padding: 2px 7px 0px 3px;
+    margin-right: 20px;
+}
