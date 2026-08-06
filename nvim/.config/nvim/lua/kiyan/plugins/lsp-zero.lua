@@ -69,5 +69,11 @@ return {
         vim.lsp.config("lua_ls", {
             settings = { Lua = { diagnostics = { globals = { "vim" } } } },
         })
+        vim.diagnostic.config({
+            virtual_text = true,
+            update_in_insert = true,
+            underline = true,
+            severity_sort = true,
+        })
     end,
 }
