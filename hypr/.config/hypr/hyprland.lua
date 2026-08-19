@@ -91,7 +91,7 @@ hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
 hl.env("LIBVA_DRIVER_NAME", "nvidia")
 
 -- Hyprshot
-hl.env("HYPRSHOT_DIR", "$HOME/Pictures/screenshots")
+hl.env("HYPRSHOT_DIR", "Pictures/screenshots")
 
 -- For electron apps
 hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
