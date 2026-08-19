@@ -15,18 +15,18 @@
 
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
 hl.monitor({
-	output = "HDMI-A-1",
-	mode = "1920x1080@75,",
+	output = "desc:Samsung Electric Company S27R35x H4UT600030",
+	mode = "1920x1080@74.97",
 	position = "0x0",
-	scale = "1",
+	scale = 1,
 	transform = 1,
 })
 
 hl.monitor({
-	output = "HDMI-A-2",
-	mode = "2560x1440@75,",
+	output = "desc:Dell Inc. DELL S2721DS DXP0VY3",
+	mode = "2560x1440@74.97",
 	position = "1080x0",
-	scale = "1",
+	scale = 1,
 	transform = 0,
 })
 
@@ -66,8 +66,10 @@ hl.on("hyprland.start", function()
 
 	hl.exec_cmd("wl-clipboard-history -t ")
 	hl.exec_cmd("wl-paste --watch cliphist store")
-	-- delete history every start
-	hl.exec_cmd("rm '$HOME/.cache/cliphist/db'")
+	hl.exec_cmd("rm '$HOME/.cache/cliphist/db'") -- delete history every start
+
+	-- Startup Apps
+	hl.exec_cmd("spotify-launcher")
 end)
 
 -------------------------------
@@ -81,6 +83,12 @@ hl.env("HYPRCURSOR_SIZE", "24")
 hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
 hl.env("XDG_SESSION_TYPE", "wayland")
 hl.env("XDG_SESSION_DESKTOP", "Hyprland")
+
+-- Refer to https://wiki.hypr.land/Nvidia/ for Electron / CEF apps
+hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
+hl.env("GBM_BACKEND", "nvidia-drm")
+hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
+hl.env("LIBVA_DRIVER_NAME", "nvidia")
 
 -- Hyprshot
 hl.env("HYPRSHOT_DIR", "$HOME/Pictures/screenshots")
@@ -148,8 +156,8 @@ hl.config({
 
 		blur = {
 			enabled = true,
-			size = 5,
-			passes = 1,
+			size = 3,
+			passes = 2,
 			vibrancy = 0.1696,
 		},
 	},
@@ -268,8 +276,8 @@ hl.gesture({
 -- Example per-device config
 -- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Devices/ for more
 hl.device({
-	name = "epic-mouse-v1",
-	sensitivity = -0.5,
+	name = "logitech-mx-master-2s-1",
+	sensitivity = 1,
 })
 
 ---------------------
@@ -309,8 +317,8 @@ for i = 1, 10 do
 end
 
 -- Example special workspace (scratchpad)
-hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("magic"))
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
+-- hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("magic"))
+-- hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
 
 -- Scroll through existing workspaces with mainMod + scroll
 hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
@@ -350,11 +358,23 @@ hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = tr
 hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
 
--- TODO: Kiyan's Bindings
+----- Kiyan's Bindings -----
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("hyprlock"))
-hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "left" }))
-hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "left" }))
-hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "left" }))
+hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("pkill waybar || waybar")) -- Keep until I remove waybar
+hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd(opentabs))
+hl.bind("ALT + Tab", hl.dsp.window.cycle_next({ true }))
+hl.bind(mainMod .. " + F", hl.dsp.window.swap({ next = true }))
+hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t sw"))
+
+-- For Hyprshot
+hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("hyprshot -m window"))
+hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("hyprshot -m output"))
+hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd("hyprshot -m region"))
+
+-- For scrolling layout
+hl.bind(mainMod .. " + SHIFT + period", hl.dsp.layout("colresize +conf"))
+hl.bind(mainMod .. " + SHIFT + comma", hl.dsp.layout("colresize -conf"))
+hl.bind(mainMod .. " + SHIFT + slash", hl.dsp.layout("promote"))
 
 --------------------------------
 ---- WINDOWS AND WORKSPACES ----
@@ -406,17 +426,94 @@ hl.window_rule({
 	float = true,
 })
 
--- For Hyprshot
-hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("hyprshot -m window"))
-hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("hyprshot -m output"))
-hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd("hyprshot -m region"))
+-- Startup applications + default workspace
+hl.window_rule({
+	name = "intellij-float-fix",
+	match = {
+		class = "^jetbrains-.+$",
+		float = true,
+	},
+	stay_focused = true,
+})
 
--- Noctalia Bindings
+-- Fix some dragging issues with XWayland
+hl.window_rule({
+	name = "xwayland-fix",
+	match = {
+		class = "^$",
+		title = "^$",
+		xwayland = 1,
+		float = 1,
+		fullscreen = 0,
+		pin = 0,
+	},
+})
+
+hl.window_rule({
+	name = "floating-apps",
+	match = { class = "^(imv|mpv)" },
+	monitor = "desc:Dell Inc. DELL S2721DS DXP0VY3",
+	float = true,
+})
+
+hl.window_rule({
+	name = "float-thunar",
+	match = { class = "^(thunar)" },
+	float = true,
+})
+
+-- Workspace rules
+hl.config({
+	scrolling = {
+		fullscreen_on_one_column = false,
+		column_width = 0.5,
+		direction = right,
+		follow_focus = true,
+		explicit_column_widths = "0.2, 0.33, 0.5, 0.67, 0.8, 1.0",
+	},
+})
+
+hl.workspace_rule({
+	workspace = "1",
+	layout = "scrolling",
+	monitor = "desc:Dell Inc. DELL S2721DS DXP0VY3",
+	on_created_empty = "zen-browser",
+	default = true,
+})
+
+hl.workspace_rule({
+	workspace = "r[3-6]",
+	layout = "scrolling",
+	monitor = "desc:Dell Inc. DELL S2721DS DXP0VY3",
+})
+
+hl.workspace_rule({
+	workspace = "2",
+	monitor = "desc:Samsung Electric Company S27R35x H4UT600030",
+	on_created_empty = "obsidian & Telegram",
+	default = true,
+})
+
+hl.workspace_rule({
+	workspace = "3",
+	on_created_empty = "betterbird & notion-app",
+})
+
+----- Noctalia Settings
+-- Core binds (Noctalia)
 local ipc = "qs -c noctalia-shell ipc call"
-
--- Core binds
 hl.bind(mainMod .. " + space", hl.dsp.exec_cmd(ipc .. " launcher toggle"))
 hl.bind(mainMod .. " + S", hl.dsp.exec_cmd(ipc .. " controlCenter toggle"))
 hl.bind(mainMod .. " + comma", hl.dsp.exec_cmd(ipc .. " settings toggle"))
 
--- Media keys
+-- Blur
+hl.layer_rule({
+	name = "noctalia",
+	match = {
+		namespace = "^noctalia-(bar-.+|notification|dock|panel|attached-panel|osd|window-switcher)$",
+	},
+	no_anim = true,
+	ignore_alpha = 0.5,
+	blur = true,
+	blur_popups = true,
+})
